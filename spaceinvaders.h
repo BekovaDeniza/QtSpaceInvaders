@@ -13,7 +13,6 @@ class CSpaceInvaders : public QGraphicsView
     Q_OBJECT
 public:
     CSpaceInvaders(QSize oScreenSize, QWidget* pParent = nullptr);
-    ~CSpaceInvaders();
 
     void Run();
     void CheckPoints();
@@ -27,6 +26,7 @@ public slots:
     void onDecreaseScore();
     void onDecreaseHealth();
     void onGameOver();
+    void Menu();
 
 private:
     CCannon*    m_pCannon = nullptr;

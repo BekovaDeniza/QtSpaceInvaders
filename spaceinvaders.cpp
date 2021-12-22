@@ -1,4 +1,5 @@
 #include "spaceinvaders.h"
+#include "button.h"
 #include <QTimer>
 
 //Инициализация сцены
@@ -10,18 +11,38 @@ CSpaceInvaders::CSpaceInvaders(QSize oScreenSize, QWidget *pParent)
 
     pScene->setSceneRect(0, 0, m_oScreenSize.width(), m_oScreenSize.height());
 
-    setBackgroundBrush(QBrush(QImage("Resources/SpaceInvadersBg.jpg")));
+    setBackgroundBrush(QBrush(QImage(":/Resources/SpaceInvadersBg.jpg")));
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setCursor(Qt::PointingHandCursor);
     setStyleSheet("border-style:none");
 }
 
+//Меню игры
+void CSpaceInvaders::Menu()
+{
+    scene()->clear();
+//    Добавляем кнопку для начала игры
+    Button *retryButton = new Button(QString("Играть"));
+    int xRetryPos = this->width()/2 - retryButton->boundingRect().width()/2;
+    int yRetryPos = 275;
+    retryButton->setPos(xRetryPos, yRetryPos);
+    connect(retryButton, &Button::clicked, this, &CSpaceInvaders::Run);
+    scene()->addItem(retryButton);
+//    добавляем кнопку для выхода
+    Button *exitButton = new Button(QString("Выход"));
+    int xExitPos = this->width()/2 - exitButton->boundingRect().width()/2;
+    int yExitPos = 350;
+    exitButton->setPos(xExitPos, yExitPos);
+    connect(exitButton, &Button::clicked, this, &CSpaceInvaders::onGameOver);
+    scene()->addItem(exitButton);
+}
+
 //Запуск игры
 void CSpaceInvaders::Run()
 {
     scene()->clear();//очищаем сцену
-    setCursor(Qt::BlankCursor);
+//    setCursor(Qt::BlankCursor);
 
     m_pCannon = new CCannon(EColor::Red);//создаем и добавляем на сцену игрока
     m_pCannon->setPos(m_oScreenSize.width() / 2, m_oScreenSize.height() - gCannonSize.height());
@@ -45,7 +66,7 @@ void CSpaceInvaders::CheckPoints()
 {
     if ((m_pPoints->GetHealth() <= 0))//если жизней не осталось, запускаем по новой
     {
-        Run();
+        Menu();
     }
 }
 
@@ -94,16 +115,19 @@ void CSpaceInvaders::keyPressEvent(QKeyEvent *pEvent)
 //добавление врага
 void CSpaceInvaders::onCreateEnemy()
 {
-    int nPos = 100 + (rand() % m_oScreenSize.width() - 100);
-    int nColor = rand() % 3;
+    if(m_pPoints->GetHealth() > 0)
+    {
+        int nPos = rand() % m_oScreenSize.width();
+        int nColor = rand() % 3;
 
-    CAlien *pAlien = new CAlien(static_cast<EColor>(nColor));
-    pAlien->setPos(nPos, 0);
+        CAlien *pAlien = new CAlien(static_cast<EColor>(nColor));
+        pAlien->setPos(nPos, 0);
 
-    scene()->addItem(pAlien);
+        scene()->addItem(pAlien);
 
-    connect(pAlien, &CAlien::sigGameOver, this, &CSpaceInvaders::onGameOver);
-    connect(pAlien, &CAlien::sigDecreaseHealth, this, &CSpaceInvaders::onDecreaseHealth);
+        connect(pAlien, &CAlien::sigGameOver, this, &CSpaceInvaders::CheckPoints);
+        connect(pAlien, &CAlien::sigDecreaseHealth, this, &CSpaceInvaders::onDecreaseHealth);
+    }
 }
 
 //добавление баллов
@@ -131,9 +155,5 @@ void CSpaceInvaders::onDecreaseHealth()
 void CSpaceInvaders::onGameOver()
 {
     close();
-}
-CSpaceInvaders::~CSpaceInvaders()
-{
-
 }
 

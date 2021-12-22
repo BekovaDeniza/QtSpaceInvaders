@@ -34,25 +34,25 @@ void CCannon::SetColor(EColor eColor)
     {
         case EColor::Red:
         {
-            QPixmap oPixmap("Resources/RedCannon.png");
+            QPixmap oPixmap(":/Resources/RedCannon.png");
             setPixmap(oPixmap.scaled(QSize(100, 100), Qt::KeepAspectRatio));
             break;
         }
         case EColor::Pink:
         {
-            QPixmap oPixmap("Resources/PinkCannon.png");
+            QPixmap oPixmap(":/Resources/PinkCannon.png");
             setPixmap(oPixmap.scaled(QSize(100, 100), Qt::KeepAspectRatio));
             break;
         }
         case EColor::Blue:
         {
-            QPixmap oPixmap("Resources/BlueCannon.png");
+            QPixmap oPixmap(":/Resources/BlueCannon.png");
             setPixmap(oPixmap.scaled(QSize(100, 100), Qt::KeepAspectRatio));
             break;
         }
         default:
         {
-            QPixmap oPixmap("Resources/RedCannon.png");
+            QPixmap oPixmap(":/Resources/RedCannon.png");
             setPixmap(oPixmap.scaled(QSize(100, 100), Qt::KeepAspectRatio));
             m_eColor = EColor::Red;
         }
@@ -86,19 +86,19 @@ void CAlien::SetColor(EColor eColor)
     {
         case EColor::Red:
         {
-            QPixmap oPixmap("Resources/RedAlien.png");
+            QPixmap oPixmap(":/Resources/RedAlien.png");
             setPixmap(oPixmap.scaled(QSize(100, 100), Qt::KeepAspectRatio));
             break;
         }
         case EColor::Pink:
         {
-            QPixmap oPixmap("Resources/PinkAlien.png");
+            QPixmap oPixmap(":/Resources/PinkAlien.png");
             setPixmap(oPixmap.scaled(QSize(100, 100), Qt::KeepAspectRatio));
             break;
         }
         case EColor::Blue:
         {
-            QPixmap oPixmap("Resources/BlueAlien.png");
+            QPixmap oPixmap(":/Resources/BlueAlien.png");
             setPixmap(oPixmap.scaled(QSize(100, 100), Qt::KeepAspectRatio));
             break;
         }
@@ -108,6 +108,13 @@ void CAlien::SetColor(EColor eColor)
 //Движение врага
 void CAlien::onMove()
 {
+    QList<QGraphicsItem*> lstCollidingItem = collidingItems();
+
+    for (auto const pItem : lstCollidingItem)
+    {
+        if (dynamic_cast<CAlien*>(pItem))
+            emit sigGameOver();
+    }
     setPos(x(), y() + 5);
 
     if (pos().y() >= (scene()->height() - gCannonSize.height()))
@@ -116,6 +123,8 @@ void CAlien::onMove()
         emit sigDecreaseHealth();
         delete this;
     }
+
+
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -145,19 +154,19 @@ void CBullet::SetColor(EColor eColor)
     {
         case EColor::Red:
         {
-            QPixmap oPixmap("Resources/RedBullet.png");
+            QPixmap oPixmap(":/Resources/RedBullet.png");
             setPixmap(oPixmap.scaled(QSize(35, 35), Qt::KeepAspectRatio));
             break;
         }
         case EColor::Pink:
         {
-            QPixmap oPixmap("Resources/PinkBullet.png");
+            QPixmap oPixmap(":/Resources/PinkBullet.png");
             setPixmap(oPixmap.scaled(QSize(35, 35), Qt::KeepAspectRatio));
             break;
         }
         case EColor::Blue:
         {
-            QPixmap oPixmap("Resources/BlueBullet.png");
+            QPixmap oPixmap(":/Resources/BlueBullet.png");
             setPixmap(oPixmap.scaled(QSize(35, 35), Qt::KeepAspectRatio));
             break;
         }
@@ -225,7 +234,7 @@ void CPoints::IncreaseScore()
 //возможность обменять 1000 баллов на жизнь
 void CPoints::DecreaseScore()
 {
-    if (m_nScore >= 1000)
+    if (m_nScore >= 1000 && m_nHealth < 3)
     {
         m_nScore -= 1000;
         m_nHealth ++;

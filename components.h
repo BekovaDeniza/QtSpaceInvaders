@@ -1,4 +1,4 @@
-#ifndef CCANNON_H
+﻿#ifndef CCANNON_H
 #define CCANNON_H
 
 #include "settings.h"
