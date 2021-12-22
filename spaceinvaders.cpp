@@ -44,7 +44,7 @@ void CSpaceInvaders::Run()
     scene()->clear();//очищаем сцену
 //    setCursor(Qt::BlankCursor);
 
-    m_pCannon = new CCannon(EColor::Red);//создаем и добавляем на сцену игрока
+    m_pCannon = new CCannon();//создаем и добавляем на сцену игрока
     m_pCannon->setPos(m_oScreenSize.width() / 2, m_oScreenSize.height() - gCannonSize.height());
     m_pCannon->setFlag(QGraphicsItem::ItemIsFocusable);
     m_pCannon->setFocus();
@@ -87,13 +87,6 @@ void CSpaceInvaders::keyPressEvent(QKeyEvent *pEvent)
             if ((m_pCannon->pos().x() + gCannonSize.width()) < m_oScreenSize.width())
                 m_pCannon->setPos(m_pCannon->x() + 20, m_pCannon->y());
             break;
-
-        case Qt::Key_Z://смена цвета корабля
-        {
-            int nColor = static_cast<int>(m_pCannon->GetColor());
-            m_pCannon->SetColor(static_cast<EColor>(++nColor));
-            break;
-        }
 
         case Qt::Key_Space://выстрел
         {

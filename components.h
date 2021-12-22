@@ -19,19 +19,12 @@ class CCannon : public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    CCannon(EColor eColor, QGraphicsItem* pParent = nullptr);
+    CCannon(QGraphicsItem* pParent = nullptr);
 
     void Shoot();
-
-    EColor GetColor() const;
-    void SetColor(EColor eColor);
-
 signals:
     void sigIncreaseScore();
     void sigDecreaseScore();
-
-private:
-    EColor m_eColor;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -62,10 +55,7 @@ class CBullet : public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    CBullet(EColor eColor, QGraphicsItem* pParent = nullptr);
-
-    EColor GetColor() const;
-    void SetColor(EColor eColor);
+    CBullet(QGraphicsItem* pParent = nullptr);
 
 signals:
     void sigIncreaseScore();
@@ -73,7 +63,6 @@ signals:
 
 public slots:
     void onMove();
-
 private:
     EColor m_eColor;
 };

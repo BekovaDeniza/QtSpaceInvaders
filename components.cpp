@@ -4,59 +4,20 @@
 #include <QGraphicsScene>
 
 //Инициализация игрока
-CCannon::CCannon(EColor eColor, QGraphicsItem *pParent) : QGraphicsPixmapItem(pParent)
+CCannon::CCannon(QGraphicsItem *pParent) : QGraphicsPixmapItem(pParent)
 {
-    SetColor(eColor);
+    QPixmap oPixmap(":/Resources/BlueCannon.png");
+    setPixmap(oPixmap.scaled(QSize(100, 100), Qt::KeepAspectRatio));
 }
 
 //Инициализация выстрела
 void CCannon::Shoot()
 {
-    CBullet* pBullet = new CBullet(m_eColor);
+    CBullet* pBullet = new CBullet();
     connect(pBullet, &CBullet::sigIncreaseScore, this, &CCannon::sigIncreaseScore);
 
     pBullet->setPos(x() + 27, y() - 10);
     scene()->addItem(pBullet);
-}
-
-//Функция возвращает цвет игрока
-EColor CCannon::GetColor() const
-{
-    return m_eColor;
-}
-
-//Набор цветов игрока
-void CCannon::SetColor(EColor eColor)
-{
-    m_eColor = eColor;
-
-    switch (eColor)
-    {
-        case EColor::Red:
-        {
-            QPixmap oPixmap(":/Resources/RedCannon.png");
-            setPixmap(oPixmap.scaled(QSize(100, 100), Qt::KeepAspectRatio));
-            break;
-        }
-        case EColor::Pink:
-        {
-            QPixmap oPixmap(":/Resources/PinkCannon.png");
-            setPixmap(oPixmap.scaled(QSize(100, 100), Qt::KeepAspectRatio));
-            break;
-        }
-        case EColor::Blue:
-        {
-            QPixmap oPixmap(":/Resources/BlueCannon.png");
-            setPixmap(oPixmap.scaled(QSize(100, 100), Qt::KeepAspectRatio));
-            break;
-        }
-        default:
-        {
-            QPixmap oPixmap(":/Resources/RedCannon.png");
-            setPixmap(oPixmap.scaled(QSize(100, 100), Qt::KeepAspectRatio));
-            m_eColor = EColor::Red;
-        }
-    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -130,86 +91,55 @@ void CAlien::onMove()
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 //Инициализация пули
-CBullet::CBullet(EColor eColor, QGraphicsItem *pParent) : QGraphicsPixmapItem(pParent)
+CBullet::CBullet(QGraphicsItem *pParent) : QGraphicsPixmapItem(pParent)
 {
-    SetColor(eColor);
+    m_eColor = EColor::Blue;
+    QPixmap oPixmap(":/BlueBullet.png");
+    setPixmap(oPixmap.scaled(QSize(35, 35), Qt::KeepAspectRatio));
 
     QTimer* pTimer = new QTimer(this);
     connect(pTimer, &QTimer::timeout, this, &CBullet::onMove);
     pTimer->start(gBulletSpeed);
 }
 
-//Функция возвращает цвет пули
-EColor CBullet::GetColor() const
-{
-    return m_eColor;
-}
-
-//Набор цветов пули
-void CBullet::SetColor(EColor eColor)
-{
-    m_eColor = eColor;
-
-    switch (eColor)
-    {
-        case EColor::Red:
-        {
-            QPixmap oPixmap(":/Resources/RedBullet.png");
-            setPixmap(oPixmap.scaled(QSize(35, 35), Qt::KeepAspectRatio));
-            break;
-        }
-        case EColor::Pink:
-        {
-            QPixmap oPixmap(":/Resources/PinkBullet.png");
-            setPixmap(oPixmap.scaled(QSize(35, 35), Qt::KeepAspectRatio));
-            break;
-        }
-        case EColor::Blue:
-        {
-            QPixmap oPixmap(":/Resources/BlueBullet.png");
-            setPixmap(oPixmap.scaled(QSize(35, 35), Qt::KeepAspectRatio));
-            break;
-        }
-    }
-}
 
 //Движение пули
 void CBullet::onMove()
 {
     QList<QGraphicsItem*> lstCollidingItem = collidingItems();
 
-    for (auto const pItem : lstCollidingItem)
-    {
-        CAlien* pAlien = dynamic_cast<CAlien*>(pItem);
-        if (pAlien != nullptr)
-        {
-            if (pAlien->GetColor() == GetColor()) //Если пуля попадает по врагу с тем же цветом, удаляем без присвоения очков.
-            {
-                scene()->removeItem(pAlien);
-                scene()->removeItem(this);
+       for (auto const pItem : lstCollidingItem)
+       {
+           CAlien* pAlien = dynamic_cast<CAlien*>(pItem);
+           if (pAlien != nullptr)
+           {
+               if (pAlien->GetColor() == m_eColor) //Если пуля попадает по врагу с тем же цветом, удаляем без присвоения очков.
+               {
+                   scene()->removeItem(pAlien);
+                   scene()->removeItem(this);
 
 
-                delete pAlien;
-                delete this;
-            }
-            else //иначе присваиваем очки.
-            {
-                emit sigIncreaseScore();
-                scene()->removeItem(this);
-                delete pAlien;
-                delete this;
-            }
-            return;
-        }
-    }
+                   delete pAlien;
+                   delete this;
+               }
+               else //иначе присваиваем очки.
+               {
+                   emit sigIncreaseScore();
+                   scene()->removeItem(this);
+                   delete pAlien;
+                   delete this;
+               }
+               return;
+           }
+       }
 
-    setPos(x(), y() - 10);
+       setPos(x(), y() - 10);
 
-    if (pos().y() < 0)//Удаление пули
-    {
-        scene()->removeItem(this);
-        delete this;
-    }
+       if (pos().y() < 0)//Удаление пули
+       {
+           scene()->removeItem(this);
+           delete this;
+       }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
