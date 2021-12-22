@@ -118,7 +118,7 @@ void CSpaceInvaders::onCreateEnemy()
 
         scene()->addItem(pAlien);
 
-        connect(pAlien, &CAlien::sigGameOver, this, &CSpaceInvaders::CheckPoints);
+        connect(pAlien, &CAlien::sigGameOver, this, &CSpaceInvaders::Menu);
         connect(pAlien, &CAlien::sigDecreaseHealth, this, &CSpaceInvaders::onDecreaseHealth);
     }
 }
