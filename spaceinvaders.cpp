@@ -109,19 +109,16 @@ void CSpaceInvaders::keyPressEvent(QKeyEvent *pEvent)
 //добавление врага
 void CSpaceInvaders::onCreateEnemy()
 {
-    if(m_pPoints->GetHealth() > 0)
-    {
-        int nPos = rand() % m_oScreenSize.width();
-        int nColor = rand() % 3;
+    int nPos = rand() % m_oScreenSize.width();
+    int nColor = rand() % 3;
 
-        CAlien *pAlien = new CAlien(static_cast<EColor>(nColor));
-        pAlien->setPos(nPos, 0);
+    CAlien *pAlien = new CAlien(static_cast<EColor>(nColor));
+    pAlien->setPos(nPos, 0);
 
-        scene()->addItem(pAlien);
+    scene()->addItem(pAlien);
 
-        connect(pAlien, &CAlien::sigGameOver, this, &CSpaceInvaders::Menu);
-        connect(pAlien, &CAlien::sigDecreaseHealth, this, &CSpaceInvaders::onDecreaseHealth);
-    }
+    connect(pAlien, &CAlien::sigGameOver, this, &CSpaceInvaders::Menu);
+    connect(pAlien, &CAlien::sigDecreaseHealth, this, &CSpaceInvaders::onDecreaseHealth);
 }
 
 //добавление баллов
