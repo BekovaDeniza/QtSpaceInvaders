@@ -6,6 +6,7 @@
 #include <QPointer>
 #include <QGraphicsView>
 #include <QKeyEvent>
+#include <QTimer>
 
 
 class CSpaceInvaders : public QGraphicsView
@@ -32,5 +33,6 @@ private:
     CCannon*    m_pCannon = nullptr;
     CPoints*    m_pPoints = nullptr;
     QSize       m_oScreenSize;
+    QTimer*      pTimer;
 };
 #endif // CSPACEINVADERS_H
