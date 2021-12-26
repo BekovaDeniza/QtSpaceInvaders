@@ -56,7 +56,7 @@ void CSpaceInvaders::Run()
     m_pPoints = new CPoints();//создание и добавление баллов
     scene()->addItem(m_pPoints);
 
-    QTimer* pTimer = new QTimer(this);
+    pTimer = new QTimer(this);
     connect(pTimer, &QTimer::timeout, this, &CSpaceInvaders::onCreateEnemy);
     pTimer->start(2000);
 }
@@ -66,6 +66,7 @@ void CSpaceInvaders::CheckPoints()
 {
     if ((m_pPoints->GetHealth() <= 0))//если жизней не осталось, запускаем по новой
     {
+        pTimer->stop();
         Menu();
     }
 }
